@@ -51,6 +51,10 @@ func Roll() DiscordCommand {
 }
 
 func roll(count int, size int) int {
+	if size <= 0 {
+		return 0
+	}
+
 	total := 0
 	for i := 0; i < count; i++ {
 		total += rand.Intn(size) + 1
