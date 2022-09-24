@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -27,8 +29,18 @@ func Roll() DiscordCommand {
 				return
 			}
 
-			count := 1
-			size := 10
+			r, _ := regexp.Compile("(?P<count>\\d+)d(?P<size>\\d+)")
+			matches := r.FindStringSubmatch("1d20")
+
+			matchMap := make(map[string]string)
+			for i, name := range r.SubexpNames() {
+				if i != 0 && name != "" {
+					matchMap[name] = matches[i]
+				}
+			}
+
+			count, _ := strconv.Atoi(matchMap["count"])
+			size, _ := strconv.Atoi(matchMap["size"])
 			result := roll(count, size)
 			_, err := s.ChannelMessageSend(m.ChannelID, fmt.Sprint(result))
 			if err != nil {
