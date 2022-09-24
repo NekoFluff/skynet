@@ -29,7 +29,7 @@ func Roll() DiscordCommand {
 				return
 			}
 
-			r, _ := regexp.Compile("(?P<count>\\d+)d(?P<size>\\d+)")
+			r, _ := regexp.Compile(`(?P<count>\d+)d(?P<size>\d+)`)
 			matches := r.FindStringSubmatch("1d20")
 
 			matchMap := make(map[string]string)
