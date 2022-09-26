@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"os"
@@ -12,6 +13,8 @@ import (
 	"warden/internal/commands"
 	"warden/internal/discord"
 	"warden/internal/utils"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 func main() {
@@ -21,17 +24,27 @@ func main() {
 	// Start up discord bot
 	token := utils.GetEnvVar("DISCORD_BOT_TOKEN")
 	cmdMgr := commands.NewCommandsManager()
-	bot := discord.NewBot(token, cmdMgr.MessageCreate)
+	bot := discord.NewBot(token)
+
 	defer bot.Stop()
 
 	// Generate Commands
-	commands := []commands.DiscordCommand{
-		commands.Help(&cmdMgr.Commands),
-		commands.Ping(),
-		commands.Pick(),
-		commands.Roll(),
+	cmdMgr.AddCommand(commands.Ping())
+	cmdMgr.AddCommand(commands.Pick())
+	cmdMgr.AddCommand(commands.Roll())
+	bot.Session.AddHandler(cmdMgr.HandleInteractionCreate)
+	bot.Session.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
+		log.Printf("Logged in as: %v#%v", s.State.User.Username, s.State.User.Discriminator)
+	})
+
+	// registeredCommands := make([]*discordgo.ApplicationCommand, len(cmdMgr.Commands))
+	for _, cmd := range cmdMgr.Commands {
+		cmd, err := bot.Session.ApplicationCommandCreate(bot.Session.State.User.ID, "", &cmd.Command)
+		if err != nil {
+			log.Panicf("Cannot create '%v' command: %v", cmd.Name, err)
+		}
+		// registeredCommands[i] = cmd
 	}
-	cmdMgr.Commands = append(cmdMgr.Commands, commands...)
 
 	go handleSignalExit()
 
@@ -40,7 +53,7 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte("Warden is online."))
 	})
-	fmt.Printf("Warden is online. Serving on port %s\n", port)
+	fmt.Printf("Serving on port %s\n", port)
 
 	_ = http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
 }

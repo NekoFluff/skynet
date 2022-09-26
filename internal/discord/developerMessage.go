@@ -15,12 +15,12 @@ func (bot *Bot) SendDeveloperMessage(message string) {
 	developerIds := getDeveloperIds()
 
 	for _, developerId := range developerIds {
-		ch, err := bot.session.UserChannelCreate(developerId)
+		ch, err := bot.Session.UserChannelCreate(developerId)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		_, err = bot.session.ChannelMessageSend(ch.ID, message)
+		_, err = bot.Session.ChannelMessageSend(ch.ID, message)
 		if err != nil {
 			fmt.Println(err)
 			return

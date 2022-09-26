@@ -6,33 +6,49 @@ import (
 	"math/rand"
 	"regexp"
 	"strconv"
-	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-func Roll() DiscordCommand {
-	prefix := getPrefix()
+func Roll() Command {
 	command := "roll"
 
-	return NewDiscordCommand(
-		prefix,
-		command,
-		fmt.Sprintf("Roll some dice (e.g. `%s%s 3d20`)", prefix, command),
-		func(s Session, m *discordgo.MessageCreate) {
-			args := strings.Split(m.Content, " ")[1:]
-			if len(args) == 0 {
-				_, err := s.ChannelMessageSend(m.ChannelID, "No arguments provided")
+	return Command{
+		Command: discordgo.ApplicationCommand{
+			Name:        command,
+			Description: fmt.Sprintf("Roll some dice (e.g. `%s 3d20`)", command),
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "dice",
+					Description: "The dice to roll",
+					Required:    true,
+				},
+			},
+		},
+		Handler: func(s Session, i *discordgo.InteractionCreate) {
+			options := i.ApplicationCommandData().Options
+			optionMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))
+			for _, opt := range options {
+				optionMap[opt.Name] = opt
+			}
+
+			dice := fmt.Sprint(optionMap["dice"].Value)
+			r, _ := regexp.Compile(`(?P<count>\d+)d(?P<size>\d+)`)
+			matches := r.FindStringSubmatch(dice)
+
+			matchMap := make(map[string]string)
+
+			if len(matches) < 3 {
+				err := respondToInteraction(s, i.Interaction, fmt.Sprintf("Invalid roll: %s", dice))
 				if err != nil {
 					log.Println(err)
 				}
 				return
 			}
 
-			r, _ := regexp.Compile(`(?P<count>\d+)d(?P<size>\d+)`)
-			matches := r.FindStringSubmatch(args[0])
+			fmt.Println(matches)
 
-			matchMap := make(map[string]string)
 			for i, name := range r.SubexpNames() {
 				if i != 0 && name != "" {
 					matchMap[name] = matches[i]
@@ -42,12 +58,13 @@ func Roll() DiscordCommand {
 			count, _ := strconv.Atoi(matchMap["count"])
 			size, _ := strconv.Atoi(matchMap["size"])
 			result := roll(count, size)
-			_, err := s.ChannelMessageSend(m.ChannelID, fmt.Sprint(result))
+			err := respondToInteraction(s, i.Interaction, fmt.Sprint(result))
+
 			if err != nil {
 				log.Println(err)
 			}
 		},
-	)
+	}
 }
 
 func roll(count int, size int) int {

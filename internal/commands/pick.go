@@ -9,31 +9,38 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func Pick() DiscordCommand {
-	prefix := getPrefix()
+func Pick() Command {
 	command := "pick"
-
-	return NewDiscordCommand(
-		prefix,
-		command,
-		fmt.Sprintf("Pick a random value (e.g. `%s%s optionA optionB optionC`)", prefix, command),
-		func(s Session, m *discordgo.MessageCreate) {
-			args := strings.Split(m.Content, " ")[1:]
-			if len(args) == 0 {
-				_, err := s.ChannelMessageSend(m.ChannelID, "No arguments provided")
-				if err != nil {
-					log.Println(err)
-				}
-				return
+	return Command{
+		Command: discordgo.ApplicationCommand{
+			Name:        command,
+			Description: fmt.Sprintf("Pick a random value (e.g. `!%s optionA optionB optionC`)", command),
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "options",
+					Description: "The several options to choose from",
+					Required:    true,
+				},
+			},
+		},
+		Handler: func(s Session, i *discordgo.InteractionCreate) {
+			options := i.ApplicationCommandData().Options
+			optionMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))
+			for _, opt := range options {
+				optionMap[opt.Name] = opt
 			}
 
+			optionsStr := fmt.Sprint(optionMap["options"].Value)
+			args := strings.Split(optionsStr, " ")
+
 			result := pick(args)
-			_, err := s.ChannelMessageSend(m.ChannelID, result)
+			err := respondToInteraction(s, i.Interaction, result)
 			if err != nil {
 				log.Println(err)
 			}
 		},
-	)
+	}
 }
 
 func pick(options []string) string {

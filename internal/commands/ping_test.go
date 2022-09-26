@@ -19,13 +19,13 @@ func TestServer_Ping(t *testing.T) {
 		{
 			name: "successfully pinged server",
 			setupMock: func(session *MockSession) {
-				session.EXPECT().ChannelMessageSend("test-channel-id", gomock.Any()).Times(1).Return(nil, nil)
+				session.EXPECT().InteractionRespond(gomock.Any(), gomock.Any()).Times(1).Return(nil)
 			},
 		},
 		{
 			name: "failed to ping server",
 			setupMock: func(session *MockSession) {
-				session.EXPECT().ChannelMessageSend("test-channel-id", gomock.Any()).Times(1).Return(nil, fmt.Errorf("random error"))
+				session.EXPECT().InteractionRespond(gomock.Any(), gomock.Any()).Times(1).Return(fmt.Errorf("random error"))
 			},
 		},
 	}
@@ -38,8 +38,10 @@ func TestServer_Ping(t *testing.T) {
 		tt.setupMock(session)
 
 		ping := Ping()
-		ping.Execute(session, &discordgo.MessageCreate{Message: &discordgo.Message{
-			ChannelID: "test-channel-id",
-		}})
+		ping.Handler(session, &discordgo.InteractionCreate{
+			Interaction: &discordgo.Interaction{
+				ChannelID: "test-channel-id",
+			},
+		})
 	}
 }

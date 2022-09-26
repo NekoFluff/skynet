@@ -8,35 +8,32 @@ import (
 )
 
 type Bot struct {
-	session *discordgo.Session
+	Session *discordgo.Session
 }
 
-func NewBot(token string, handler func(*discordgo.Session, *discordgo.MessageCreate)) *Bot {
-	session, err := createBot(token, handler)
+func NewBot(token string) *Bot {
+	session, err := createBot(token)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	return &Bot{
-		session: session,
+		Session: session,
 	}
 }
 
 func (bot *Bot) Stop() {
 	// Cleanly close down the Discord session.
-	bot.session.Close()
+	bot.Session.Close()
 }
 
-func createBot(Token string, handler func(*discordgo.Session, *discordgo.MessageCreate)) (s *discordgo.Session, err error) {
+func createBot(Token string) (s *discordgo.Session, err error) {
 	// Create a new Discord session using the provided bot token.
 	s, err = discordgo.New("Bot " + Token)
 	if err != nil {
 		fmt.Println("error creating Discord session,", err)
 		return
 	}
-
-	// Register the handler func as a callback for MessageCreate events.
-	s.AddHandler(handler)
 
 	s.Identify.Intents = discordgo.IntentsGuildMessages
 

@@ -6,20 +6,20 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func Ping() DiscordCommand {
-	prefix := getPrefix()
+func Ping() Command {
 	command := "ping"
 
-	return NewDiscordCommand(
-		prefix,
-		command,
-		"Is the warden watching?",
-		func(s Session, m *discordgo.MessageCreate) {
-			_, err := s.ChannelMessageSend(m.ChannelID, "Pong!")
+	return Command{
+		Command: discordgo.ApplicationCommand{
+			Name:        command,
+			Description: "Is the bot online?",
+		},
+		Handler: func(s Session, i *discordgo.InteractionCreate) {
+			err := respondToInteraction(s, i.Interaction, "Pong!")
 			if err != nil {
 				log.Println("An error occurred while pinging the server")
 				log.Println(err)
 			}
 		},
-	)
+	}
 }

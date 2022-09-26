@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"runtime/debug"
@@ -21,7 +20,7 @@ func GetEnvVar(name string) string {
 	envVar := os.Getenv(name)
 	if envVar == "" {
 		debug.PrintStack()
-		log.Println(fmt.Sprintf("env var %v must be set", name))
+		log.Printf("env var %v must be set", name)
 	}
 	return envVar
 }

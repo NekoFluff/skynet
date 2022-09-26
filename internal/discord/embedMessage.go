@@ -7,9 +7,9 @@ import (
 )
 
 func (bot *Bot) SendEmbedMessage(channelName string, message *discordgo.MessageEmbed) {
-	for _, guild := range bot.session.State.Guilds {
+	for _, guild := range bot.Session.State.Guilds {
 		// Get channels for this guild (a.k.a discord server)
-		channels, _ := bot.session.GuildChannels(guild.ID)
+		channels, _ := bot.Session.GuildChannels(guild.ID)
 
 		for _, c := range channels {
 			// Ensure the channel is a guild text channel and not a voice or DM channel
@@ -23,7 +23,7 @@ func (bot *Bot) SendEmbedMessage(channelName string, message *discordgo.MessageE
 			}
 
 			// Send a message to the discord channel
-			_, err := bot.session.ChannelMessageSendEmbed(
+			_, err := bot.Session.ChannelMessageSendEmbed(
 				c.ID,
 				message,
 			)
