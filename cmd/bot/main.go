@@ -2,19 +2,17 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
 	"warden/internal/commands"
 	"warden/internal/discord"
 	"warden/internal/utils"
-
-	"github.com/bwmarrin/discordgo"
 )
 
 func main() {
@@ -23,26 +21,18 @@ func main() {
 
 	// Start up discord bot
 	token := utils.GetEnvVar("DISCORD_BOT_TOKEN")
-	cmdMgr := discord.NewCommandsManager()
 	bot := discord.NewBot(token)
+
+	ids := utils.GetEnvVar("DEVELOPER_IDS")
+	if ids != "" {
+		bot.DeveloperIDs = strings.Split(ids, ",")
+	}
 
 	defer bot.Stop()
 
 	// Generate Commands
-	cmdMgr.AddCommands(commands.Ping(), commands.Pick(), commands.Roll())
-	bot.Session.AddHandler(cmdMgr.HandleInteractionCreate)
-	bot.Session.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
-		log.Printf("Logged in as: %v#%v", s.State.User.Username, s.State.User.Discriminator)
-	})
-
-	// registeredCommands := make([]*discordgo.ApplicationCommand, len(cmdMgr.Commands))
-	for _, cmd := range cmdMgr.Commands {
-		cmd, err := bot.Session.ApplicationCommandCreate(bot.Session.State.User.ID, "", &cmd.Command)
-		if err != nil {
-			log.Panicf("Cannot create '%v' command: %v", cmd.Name, err)
-		}
-		// registeredCommands[i] = cmd
-	}
+	bot.AddCommands(commands.Ping(), commands.Pick(), commands.Roll())
+	bot.RegisterCommands()
 
 	go handleSignalExit()
 

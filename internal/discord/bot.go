@@ -3,25 +3,33 @@ package discord
 import (
 	"fmt"
 	"log"
-	"strings"
-	"warden/internal/utils"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 type Bot struct {
-	Session *discordgo.Session
+	Session      *discordgo.Session
+	Commands     map[string]Command
+	DeveloperIDs []string
 }
 
 func NewBot(token string) *Bot {
-	session, err := createBot(token)
+	session, err := createSession(token)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return &Bot{
-		Session: session,
+	bot := &Bot{
+		Session:      session,
+		Commands:     make(map[string]Command),
+		DeveloperIDs: []string{},
 	}
+
+	bot.Session.AddHandler(bot.handleInteractionCreate)
+	bot.Session.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
+		log.Printf("Logged in as: %v#%v", s.State.User.Username, s.State.User.Discriminator)
+	})
+	return bot
 }
 
 func (bot *Bot) Stop() {
@@ -29,7 +37,7 @@ func (bot *Bot) Stop() {
 	bot.Session.Close()
 }
 
-func createBot(Token string) (s *discordgo.Session, err error) {
+func createSession(Token string) (s *discordgo.Session, err error) {
 	// Create a new Discord session using the provided bot token.
 	s, err = discordgo.New("Bot " + Token)
 	if err != nil {
@@ -47,6 +55,35 @@ func createBot(Token string) (s *discordgo.Session, err error) {
 	}
 
 	return
+}
+
+func (bot *Bot) AddCommands(cmds ...Command) {
+	for _, cmd := range cmds {
+		bot.Commands[cmd.Command.Name] = cmd
+	}
+}
+
+func (bot *Bot) RegisterCommands() {
+	for _, cmd := range bot.Commands {
+		cmd, err := bot.Session.ApplicationCommandCreate(bot.Session.State.User.ID, "", &cmd.Command)
+		if err != nil {
+			log.Panicf("Cannot create '%v' command: %v", cmd.Name, err)
+		}
+	}
+}
+
+// This function will be called every time a new
+// message is created on any channel that the authenticated bot has access to.
+func (bot *Bot) handleInteractionCreate(s *discordgo.Session, i *discordgo.InteractionCreate) {
+
+	// Ignore all messages created by the bot itself
+	if i.Message.Author.ID == s.State.User.ID {
+		return
+	}
+
+	if cmd, ok := bot.Commands[i.ApplicationCommandData().Name]; ok {
+		cmd.Handler(s, i)
+	}
 }
 
 func (bot *Bot) SendChannelMessage(channelName string, message string) {
@@ -79,14 +116,7 @@ func (bot *Bot) SendChannelMessage(channelName string, message string) {
 }
 
 func (bot *Bot) SendDeveloperMessage(message string) {
-	developer_mode := utils.GetEnvVar("DEVELOPER_MODE")
-	if developer_mode != "ON" && developer_mode != "1" {
-		return
-	}
-
-	developerIds := getDeveloperIds()
-
-	for _, developerId := range developerIds {
+	for _, developerId := range bot.DeveloperIDs {
 		ch, err := bot.Session.UserChannelCreate(developerId)
 		if err != nil {
 			fmt.Println(err)
@@ -98,14 +128,6 @@ func (bot *Bot) SendDeveloperMessage(message string) {
 			return
 		}
 	}
-}
-
-func getDeveloperIds() []string {
-	ids := utils.GetEnvVar("DEVELOPER_IDS")
-	if ids == "" {
-		return []string{}
-	}
-	return strings.Split(ids, ",")
 }
 
 func (bot *Bot) SendEmbedMessage(channelName string, message *discordgo.MessageEmbed) {
