@@ -6,14 +6,15 @@ import (
 	"math/rand"
 	"regexp"
 	"strconv"
+	"warden/internal/discord"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-func Roll() Command {
+func Roll() discord.Command {
 	command := "roll"
 
-	return Command{
+	return discord.Command{
 		Command: discordgo.ApplicationCommand{
 			Name:        command,
 			Description: fmt.Sprintf("Roll some dice (e.g. `%s 3d20`)", command),
@@ -26,7 +27,7 @@ func Roll() Command {
 				},
 			},
 		},
-		Handler: func(s Session, i *discordgo.InteractionCreate) {
+		Handler: func(s discord.Session, i *discordgo.InteractionCreate) {
 			options := i.ApplicationCommandData().Options
 			optionMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))
 			for _, opt := range options {

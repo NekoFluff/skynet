@@ -23,15 +23,13 @@ func main() {
 
 	// Start up discord bot
 	token := utils.GetEnvVar("DISCORD_BOT_TOKEN")
-	cmdMgr := commands.NewCommandsManager()
+	cmdMgr := discord.NewCommandsManager()
 	bot := discord.NewBot(token)
 
 	defer bot.Stop()
 
 	// Generate Commands
-	cmdMgr.AddCommand(commands.Ping())
-	cmdMgr.AddCommand(commands.Pick())
-	cmdMgr.AddCommand(commands.Roll())
+	cmdMgr.AddCommands(commands.Ping(), commands.Pick(), commands.Roll())
 	bot.Session.AddHandler(cmdMgr.HandleInteractionCreate)
 	bot.Session.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
 		log.Printf("Logged in as: %v#%v", s.State.User.Username, s.State.User.Discriminator)

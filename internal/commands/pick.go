@@ -5,13 +5,14 @@ import (
 	"log"
 	"math/rand"
 	"strings"
+	"warden/internal/discord"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-func Pick() Command {
+func Pick() discord.Command {
 	command := "pick"
-	return Command{
+	return discord.Command{
 		Command: discordgo.ApplicationCommand{
 			Name:        command,
 			Description: fmt.Sprintf("Pick a random value (e.g. `!%s optionA optionB optionC`)", command),
@@ -24,7 +25,7 @@ func Pick() Command {
 				},
 			},
 		},
-		Handler: func(s Session, i *discordgo.InteractionCreate) {
+		Handler: func(s discord.Session, i *discordgo.InteractionCreate) {
 			options := i.ApplicationCommandData().Options
 			optionMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))
 			for _, opt := range options {

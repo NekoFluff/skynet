@@ -1,5 +1,4 @@
-//go:generate mockgen -package=commands -source=command.go -destination=command_mock_test.go
-package commands
+package discord
 
 import (
 	"github.com/bwmarrin/discordgo"
