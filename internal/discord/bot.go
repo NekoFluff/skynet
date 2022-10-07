@@ -75,12 +75,6 @@ func (bot *Bot) RegisterCommands() {
 // This function will be called every time a new
 // message is created on any channel that the authenticated bot has access to.
 func (bot *Bot) handleInteractionCreate(s *discordgo.Session, i *discordgo.InteractionCreate) {
-
-	// Ignore all messages created by the bot itself
-	if i.Message.Author.ID == s.State.User.ID {
-		return
-	}
-
 	if cmd, ok := bot.Commands[i.ApplicationCommandData().Name]; ok {
 		cmd.Handler(s, i)
 	}
