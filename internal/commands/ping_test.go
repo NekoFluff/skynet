@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"os"
 	"testing"
 	"warden/internal/discord"
 
@@ -11,8 +10,6 @@ import (
 )
 
 func TestServer_Ping(t *testing.T) {
-	os.Setenv("COMMAND_PREFIX", "!")
-
 	tests := []struct {
 		name      string
 		setupMock func(*discord.MockSession)
