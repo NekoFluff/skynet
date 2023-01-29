@@ -14,3 +14,12 @@ func respondToInteraction(s discord.Session, i *discordgo.Interaction, msg strin
 		},
 	})
 }
+
+func respondToInteractionWithEmbed(s discord.Session, i *discordgo.Interaction, embed discordgo.MessageEmbed) (err error) {
+	return s.InteractionRespond(i, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Embeds: []*discordgo.MessageEmbed{&embed},
+		},
+	})
+}
