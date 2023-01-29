@@ -65,9 +65,9 @@ func (bot *Bot) AddCommands(cmds ...Command) {
 
 func (bot *Bot) RegisterCommands() {
 	for _, cmd := range bot.Commands {
-		cmd, err := bot.Session.ApplicationCommandCreate(bot.Session.State.User.ID, "", &cmd.Command)
+		_, err := bot.Session.ApplicationCommandCreate(bot.Session.State.User.ID, "", &cmd.Command)
 		if err != nil {
-			log.Panicf("Cannot create '%v' command: %v", cmd.Name, err)
+			log.Panicf("Cannot create command '%v'", err)
 		}
 	}
 }
