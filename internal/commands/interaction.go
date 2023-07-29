@@ -1,12 +1,10 @@
 package commands
 
 import (
-	"warden/internal/discord"
-
 	"github.com/bwmarrin/discordgo"
 )
 
-func respondToInteraction(s discord.Session, i *discordgo.Interaction, msg string) (err error) {
+func respondToInteraction(s *discordgo.Session, i *discordgo.Interaction, msg string) (err error) {
 	return s.InteractionRespond(i, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
@@ -15,11 +13,11 @@ func respondToInteraction(s discord.Session, i *discordgo.Interaction, msg strin
 	})
 }
 
-func respondToInteractionWithEmbed(s discord.Session, i *discordgo.Interaction, embed discordgo.MessageEmbed) (err error) {
+func respondToInteractionWithEmbed(s *discordgo.Session, i *discordgo.Interaction, e *discordgo.MessageEmbed) (err error) {
 	return s.InteractionRespond(i, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
-			Embeds: []*discordgo.MessageEmbed{&embed},
+			Embeds: []*discordgo.MessageEmbed{e},
 		},
 	})
 }

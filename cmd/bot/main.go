@@ -10,9 +10,9 @@ import (
 	"syscall"
 	"time"
 
-	"warden/internal/commands"
-	"warden/internal/discord"
-	"warden/internal/utils"
+	"github.com/NekoFluff/discord"
+	"github.com/NekoFluff/skynet/internal/commands"
+	"github.com/NekoFluff/skynet/internal/utils"
 )
 
 func main() {
@@ -39,7 +39,7 @@ func main() {
 	// Bind to port
 	port := utils.GetEnvVar("PORT")
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		_, _ = w.Write([]byte("Warden is online."))
+		_, _ = w.Write([]byte("Skynet is online."))
 	})
 	fmt.Printf("Serving on port %s\n", port)
 

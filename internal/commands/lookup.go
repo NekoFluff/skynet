@@ -3,8 +3,8 @@ package commands
 import (
 	"fmt"
 	"log"
-	"warden/internal/discord"
 
+	"github.com/NekoFluff/discord"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -80,7 +80,7 @@ func Lookup() discord.Command {
 				},
 			},
 		},
-		Handler: func(s discord.Session, i *discordgo.InteractionCreate) {
+		Handler: func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			options := i.ApplicationCommandData().Options
 			optionMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))
 			for _, opt := range options {

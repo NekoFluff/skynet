@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	discordgo "github.com/bwmarrin/discordgo"
-	gomock "github.com/golang/mock/gomock"
+	gomock "go.uber.org/mock/gomock"
 )
 
 // MockSession is a mock of Session interface.

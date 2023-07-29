@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
-	"warden/internal/discord"
+
+	"github.com/NekoFluff/discord"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -17,7 +18,7 @@ func RandomLoadout() discord.Command {
 			Name:        command,
 			Description: "Randomize your GTFO loadout",
 		},
-		Handler: func(s discord.Session, i *discordgo.InteractionCreate) {
+		Handler: func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			main := randomStringFromList([]string{"Pistol", "HEL Revolver", "Machine Pistol", "SMG", "PDW", "Carbine", "Assault Rifle", "Bullpup Rifle", "Burst Rifle", "DMR", "HEL Shotgun"})
 			special := randomStringFromList([]string{"Machine Gun V", "Machine Gun XII", "Heavy Assault Rifle", "Shotgun", "Combat Shotgun", "Choke Mod Shotgun", "Revolver", "High Cal Pistol", "Precision Rifle", "Sniper"})
 			tool := randomStringFromList([]string{"Bio Tracker", "C-Foam Launcher", "Mine Deployer", "Burst Sentry", "Shotgun Sentry", "Sniper Sentry"})
@@ -46,7 +47,7 @@ func RandomLoadout() discord.Command {
 				},
 			}
 
-			err := respondToInteractionWithEmbed(s, i.Interaction, embed)
+			err := respondToInteractionWithEmbed(s, i.Interaction, &embed)
 
 			if err != nil {
 				log.Println(err)
