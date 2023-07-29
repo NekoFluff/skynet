@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  skynet:
+    platform: linux/arm/v7
+    image: skynet
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      tags:
+        - "nekofluff/skynet"
+    environment:
+      ENV_FILE: /run/secrets/env_file
+    secrets:
+       - env_file
+secrets:
+  env_file:
+    file: .env
