@@ -14,8 +14,8 @@ build:
 
 run:
 	go mod vendor
-	docker compose --file ./docker-compose.yml --project-directory . up --build \
-	docker compose --file ./docker-compose.yml --project-directory . down --volumes \
+	docker compose --file ./docker-compose.yml --project-directory . up --build
+	docker compose --file ./docker-compose.yml --project-directory . down --volumes
 	rmdir /s /q vendor
 
 up:
