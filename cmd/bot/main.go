@@ -2,13 +2,11 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 	"net/http"
 	"os"
 	"os/signal"
 	"strings"
 	"syscall"
-	"time"
 
 	"github.com/NekoFluff/discord"
 	"github.com/NekoFluff/skynet/internal/commands"
@@ -16,9 +14,6 @@ import (
 )
 
 func main() {
-	// Initialize global pseudo random generator
-	rand.Seed(time.Now().Unix())
-
 	// Start up discord bot
 	token := utils.GetEnvVar("DISCORD_BOT_TOKEN")
 	bot := discord.NewBot(token)

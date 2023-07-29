@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/NekoFluff/discord"
+	"github.com/NekoFluff/skynet/internal/mydiscord"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -26,7 +27,7 @@ func Pick() discord.Command {
 				},
 			},
 		},
-		Handler: func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+		Handler: func(s mydiscord.Session, i *discordgo.InteractionCreate) {
 			options := i.ApplicationCommandData().Options
 			optionMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))
 			for _, opt := range options {

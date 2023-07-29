@@ -2,28 +2,28 @@ package commands
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 
-	"github.com/NekoFluff/internal/mocks"
-
+	"github.com/NekoFluff/skynet/internal/mydiscord"
 	"github.com/bwmarrin/discordgo"
-	gomock "github.com/golang/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
 func TestServer_Ping(t *testing.T) {
 	tests := []struct {
 		name      string
-		setupMock func(*mocks.MockSession)
+		setupMock func(*mydiscord.MockSession)
 	}{
 		{
 			name: "successfully pinged server",
-			setupMock: func(session *mocks.MockSession) {
+			setupMock: func(session *mydiscord.MockSession) {
 				session.EXPECT().InteractionRespond(gomock.Any(), gomock.Any()).Times(1).Return(nil)
 			},
 		},
 		{
 			name: "failed to ping server",
-			setupMock: func(session *mocks.MockSession) {
+			setupMock: func(session *mydiscord.MockSession) {
 				session.EXPECT().InteractionRespond(gomock.Any(), gomock.Any()).Times(1).Return(fmt.Errorf("random error"))
 			},
 		},
@@ -33,14 +33,18 @@ func TestServer_Ping(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		session := mocks.NewMockSession(ctrl)
+		session := mydiscord.NewMockSession(ctrl)
 		tt.setupMock(session)
 
 		ping := Ping()
-		ping.Handler(session, &discordgo.InteractionCreate{
-			Interaction: &discordgo.Interaction{
-				ChannelID: "test-channel-id",
-			},
+		reflect.ValueOf(ping.Handler).Call([]reflect.Value{
+			reflect.ValueOf(session),
+			reflect.ValueOf(&discordgo.InteractionCreate{
+				Interaction: &discordgo.Interaction{
+					ChannelID: "test-channel-id",
+				},
+			}),
 		})
+
 	}
 }
