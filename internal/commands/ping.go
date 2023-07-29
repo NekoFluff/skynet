@@ -4,8 +4,6 @@ import (
 	"log"
 
 	"github.com/NekoFluff/discord"
-	"github.com/NekoFluff/skynet/internal/mydiscord"
-
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -17,7 +15,7 @@ func Ping() discord.Command {
 			Name:        command,
 			Description: "Is the bot online?",
 		},
-		Handler: func(s mydiscord.Session, i *discordgo.InteractionCreate) {
+		Handler: func(s discord.Session, i *discordgo.InteractionCreate) {
 			err := respondToInteraction(s, i.Interaction, "Pong!")
 			if err != nil {
 				log.Println("An error occurred while pinging the server")

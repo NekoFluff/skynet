@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/NekoFluff/skynet/internal/mydiscord"
+	"github.com/NekoFluff/discord"
 	"github.com/bwmarrin/discordgo"
 	"go.uber.org/mock/gomock"
 )
@@ -13,17 +13,17 @@ import (
 func TestServer_Ping(t *testing.T) {
 	tests := []struct {
 		name      string
-		setupMock func(*mydiscord.MockSession)
+		setupMock func(*discord.MockSession)
 	}{
 		{
 			name: "successfully pinged server",
-			setupMock: func(session *mydiscord.MockSession) {
+			setupMock: func(session *discord.MockSession) {
 				session.EXPECT().InteractionRespond(gomock.Any(), gomock.Any()).Times(1).Return(nil)
 			},
 		},
 		{
 			name: "failed to ping server",
-			setupMock: func(session *mydiscord.MockSession) {
+			setupMock: func(session *discord.MockSession) {
 				session.EXPECT().InteractionRespond(gomock.Any(), gomock.Any()).Times(1).Return(fmt.Errorf("random error"))
 			},
 		},
@@ -33,7 +33,7 @@ func TestServer_Ping(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		session := mydiscord.NewMockSession(ctrl)
+		session := discord.NewMockSession(ctrl)
 		tt.setupMock(session)
 
 		ping := Ping()

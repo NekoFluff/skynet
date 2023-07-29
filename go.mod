@@ -3,7 +3,7 @@ module github.com/NekoFluff/skynet
 go 1.20
 
 require (
-	github.com/NekoFluff/discord v1.1.1
+	github.com/NekoFluff/discord v1.2.0
 	github.com/bwmarrin/discordgo v0.27.1
 	github.com/joho/godotenv v1.5.1
 	github.com/magiconair/properties v1.8.7
