@@ -26,7 +26,7 @@ func main() {
 	defer bot.Stop()
 
 	// Generate Commands
-	bot.AddCommands(commands.Ping(), commands.Pick(), commands.Roll(), commands.RandomLoadout(), commands.Lookup())
+	bot.AddCommands(commands.Ping(), commands.Pick(), commands.Roll(), commands.RandomLoadout(), commands.Lookup(), commands.Translate())
 	bot.RegisterCommands()
 
 	go handleSignalExit()
