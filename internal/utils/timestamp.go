@@ -7,7 +7,7 @@ import (
 
 func ConvertToUnixTimestamp(input string) (int64, error) {
 	// Parse the date time string
-	layouts := []string{time.ANSIC, time.UnixDate, time.RubyDate, time.RFC822, time.RFC822Z, time.RFC850, time.RFC1123, time.RFC1123Z, time.RFC3339, time.RFC3339Nano, "2006-01-02 15:04:05", "02/01/2006", "January 2, 2006 3PM MST"}
+	layouts := []string{"January 2, 2006 3PM MST", "Jan 2, 2006 3PM MST", "02/01/2006", time.ANSIC, time.UnixDate, time.RubyDate, time.RFC822, time.RFC822Z, time.RFC850, time.RFC1123, time.RFC1123Z, time.RFC3339, time.RFC3339Nano}
 	t, err := parseTime(layouts, input)
 	if err != nil {
 		return 0, err

@@ -24,11 +24,11 @@ func TestServer_Timestamp(t *testing.T) {
 			dateTime: "October 8, 2024 4PM MST",
 		},
 		{
-			name: "successfully converted to timestamp 2",
+			name: "successfully converted to timestamp",
 			setupMock: func(session *discord.MockSession) {
-				session.EXPECT().InteractionRespond(gomock.Any(), containsInteractionResponseMatcher{"t:1728403200"}).Times(1).Return(nil)
+				session.EXPECT().InteractionRespond(gomock.Any(), containsInteractionResponseMatcher{"t:1728428400"}).Times(1).Return(nil)
 			},
-			dateTime: "2024-10-08 16:00:00",
+			dateTime: "Oct 8, 2024 4PM MST",
 		},
 		{
 			name: "successfully converted to timestamp 3",
