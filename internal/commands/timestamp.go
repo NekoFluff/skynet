@@ -41,7 +41,7 @@ func Timestamp() discord.Command {
 			dateTime := fmt.Sprint(optionMap["datetime"].Value)
 			timezone := "MST"
 
-			if optionMap["timezone"] != nil {
+			if optionMap["timezone"] != nil && optionMap["timezone"].Value != "" {
 				timezone = fmt.Sprint(optionMap["timezone"].Value)
 			}
 
