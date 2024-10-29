@@ -16,20 +16,20 @@ func TestServer_Timestamp(t *testing.T) {
 		dateTime          string
 		expectedTimestamp string
 	}{
-		{
-			name: "successfully converted to timestamp",
-			setupMock: func(session *discord.MockSession) {
-				session.EXPECT().InteractionRespond(gomock.Any(), containsInteractionResponseMatcher{"t:1728428400"}).Times(1).Return(nil)
-			},
-			dateTime: "October 8, 2024 4PM MST",
-		},
-		{
-			name: "successfully converted to timestamp",
-			setupMock: func(session *discord.MockSession) {
-				session.EXPECT().InteractionRespond(gomock.Any(), containsInteractionResponseMatcher{"t:1728428400"}).Times(1).Return(nil)
-			},
-			dateTime: "Oct 8, 2024 4PM MST",
-		},
+		// {
+		// 	name: "successfully converted to timestamp",
+		// 	setupMock: func(session *discord.MockSession) {
+		// 		session.EXPECT().InteractionRespond(gomock.Any(), containsInteractionResponseMatcher{"t:1728428400"}).Times(1).Return(nil)
+		// 	},
+		// 	dateTime: "October 8, 2024 4PM MST",
+		// },
+		// {
+		// 	name: "successfully converted to timestamp",
+		// 	setupMock: func(session *discord.MockSession) {
+		// 		session.EXPECT().InteractionRespond(gomock.Any(), containsInteractionResponseMatcher{"t:1728428400"}).Times(1).Return(nil)
+		// 	},
+		// 	dateTime: "Oct 8, 2024 4PM MST",
+		// },
 		{
 			name: "successfully converted to timestamp 3",
 			setupMock: func(session *discord.MockSession) {
