@@ -23,6 +23,12 @@ func Timestamp() discord.Command {
 					Description: "The date and time to convert to a unix timestamp",
 					Required:    true,
 				},
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "timezone",
+					Description: "The timezone to use when converting the date time to a unix timestamp (default MST)",
+					Required:    false,
+				},
 			},
 		},
 		Handler: func(s discord.Session, i *discordgo.InteractionCreate) {
@@ -33,8 +39,12 @@ func Timestamp() discord.Command {
 			}
 
 			dateTime := fmt.Sprint(optionMap["date time"].Value)
+			timezone := fmt.Sprint(optionMap["timezone"].Value)
+			if timezone == "" {
+				timezone = "MST"
+			}
 
-			timestamp, err := utils.ConvertToUnixTimestamp(dateTime)
+			timestamp, err := utils.ConvertToUnixTimestamp(dateTime, timezone)
 			if err != nil {
 				err := respondToInteraction(s, i.Interaction, "Could not convert the date time to a unix timestamp")
 				if err != nil {
