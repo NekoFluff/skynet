@@ -23,13 +23,13 @@ up:
 	docker compose --file ./docker-compose.yml --project-directory . up --build -d
 	rmdir /s /q vendor
 
+down:
+	docker compose --file ./docker-compose.yml --project-directory . down --volumes
+
 publish-latest-image:
 	go mod vendor
 	docker image build -t nekofluff/skynet .
 	docker image push nekofluff/skynet
-
-down:
-	docker compose --file ./docker-compose.yml --project-directory . down --volumes
 
 deploy-up:
 	docker image pull nekofluff/skynet
