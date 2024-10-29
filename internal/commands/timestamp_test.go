@@ -84,7 +84,7 @@ func TestServer_Timestamp(t *testing.T) {
 					Data: discordgo.ApplicationCommandInteractionData{
 						Options: []*discordgo.ApplicationCommandInteractionDataOption{
 							{
-								Name:  "date time",
+								Name:  "datetime",
 								Value: tt.dateTime,
 							},
 							{

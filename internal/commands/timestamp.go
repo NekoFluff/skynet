@@ -15,11 +15,11 @@ func Timestamp() discord.Command {
 	return discord.Command{
 		Command: discordgo.ApplicationCommand{
 			Name:        command,
-			Description: fmt.Sprintf("Translates a generic date time string to a unix timestamp (e.g. `%s October 8, 2024 4PM MST` or `2006-01-02T15:04:05Z07:00`)", command),
+			Description: "Translate a date time string to a unix timestamp",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionString,
-					Name:        "date time",
+					Name:        "datetime",
 					Description: "The date and time to convert to a unix timestamp",
 					Required:    true,
 				},
@@ -38,10 +38,11 @@ func Timestamp() discord.Command {
 				optionMap[opt.Name] = opt
 			}
 
-			dateTime := fmt.Sprint(optionMap["date time"].Value)
-			timezone := fmt.Sprint(optionMap["timezone"].Value)
-			if timezone == "" {
-				timezone = "MST"
+			dateTime := fmt.Sprint(optionMap["datetime"].Value)
+			timezone := "MST"
+
+			if optionMap["timezone"] != nil {
+				timezone = fmt.Sprint(optionMap["timezone"].Value)
 			}
 
 			timestamp, err := utils.ConvertToUnixTimestamp(dateTime, timezone)
