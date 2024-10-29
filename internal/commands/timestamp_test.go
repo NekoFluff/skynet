@@ -19,49 +19,49 @@ func TestServer_Timestamp(t *testing.T) {
 		{
 			name: "successfully converted to timestamp",
 			setupMock: func(session *discord.MockSession) {
-				session.EXPECT().InteractionRespond(gomock.Any(), containsInteractionResponseMatcher{"t:1728428400"}).Times(1).Return(nil)
+				session.EXPECT().InteractionRespond(gomock.Any(), discord.ContainsInteractionResponse("t:1728428400")).Times(1).Return(nil)
 			},
 			dateTime: "October 8, 2024 4PM",
 		},
 		{
 			name: "successfully converted to timestamp",
 			setupMock: func(session *discord.MockSession) {
-				session.EXPECT().InteractionRespond(gomock.Any(), containsInteractionResponseMatcher{"t:1728428400"}).Times(1).Return(nil)
+				session.EXPECT().InteractionRespond(gomock.Any(), discord.ContainsInteractionResponse("t:1728428400")).Times(1).Return(nil)
 			},
 			dateTime: "Oct 8, 2024 4PM",
 		},
 		{
 			name: "successfully converted to timestamp 3",
 			setupMock: func(session *discord.MockSession) {
-				session.EXPECT().InteractionRespond(gomock.Any(), containsInteractionResponseMatcher{"t:1728403200"}).Times(1).Return(nil)
+				session.EXPECT().InteractionRespond(gomock.Any(), discord.ContainsInteractionResponse("t:1728403200")).Times(1).Return(nil)
 			},
 			dateTime: "2024-10-08T16:00:00+00:00",
 		},
 		{
 			name: "successfully converted to timestamp 4",
 			setupMock: func(session *discord.MockSession) {
-				session.EXPECT().InteractionRespond(gomock.Any(), containsInteractionResponseMatcher{"t:1730336400"}).Times(1).Return(nil)
+				session.EXPECT().InteractionRespond(gomock.Any(), discord.ContainsInteractionResponse("t:1730336400")).Times(1).Return(nil)
 			},
 			dateTime: "2024-10-31T01:00:00+00:00",
 		},
 		{
 			name: "successfully converted to timestamp 5",
 			setupMock: func(session *discord.MockSession) {
-				session.EXPECT().InteractionRespond(gomock.Any(), containsInteractionResponseMatcher{"t:1728403200"}).Times(1).Return(nil)
+				session.EXPECT().InteractionRespond(gomock.Any(), discord.ContainsInteractionResponse("t:1728403200")).Times(1).Return(nil)
 			},
 			dateTime: "2024-10-08T16:00:00Z",
 		},
 		{
 			name: "successfully converted to timestamp 6",
 			setupMock: func(session *discord.MockSession) {
-				session.EXPECT().InteractionRespond(gomock.Any(), containsInteractionResponseMatcher{"t:1728370800"}).Times(1).Return(nil)
+				session.EXPECT().InteractionRespond(gomock.Any(), discord.ContainsInteractionResponse("t:1728370800")).Times(1).Return(nil)
 			},
 			dateTime: "10/8/2024", // month/day/year
 		},
 		{
 			name: "failed to convert to timestamp",
 			setupMock: func(session *discord.MockSession) {
-				session.EXPECT().InteractionRespond(gomock.Any(), containsInteractionResponseMatcher{"Could not convert the date time to a unix timestamp"}).Times(1).Return(nil)
+				session.EXPECT().InteractionRespond(gomock.Any(), discord.ContainsInteractionResponse("Could not convert the date time to a unix timestamp")).Times(1).Return(nil)
 			},
 			dateTime: "invalid date time",
 		},
