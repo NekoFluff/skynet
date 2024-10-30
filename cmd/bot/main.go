@@ -8,6 +8,8 @@ import (
 	"strings"
 	"syscall"
 
+	_ "time/tzdata"
+
 	"github.com/NekoFluff/discord"
 	"github.com/NekoFluff/skynet/internal/commands"
 	"github.com/NekoFluff/skynet/internal/utils"

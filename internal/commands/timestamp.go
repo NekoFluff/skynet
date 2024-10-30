@@ -49,7 +49,7 @@ func Timestamp() discord.Command {
 			timestamp, err := utils.ConvertToUnixTimestamp(dateTime, timezone)
 			if err != nil {
 				slog.Error("failed to convert date time to unix timestamp", "error", err, "datetime", dateTime, "timezone", timezone)
-				err := respondToInteraction(s, i.Interaction, "Could not convert the date time to a unix timestamp\n\nerror: "+err.Error())
+				err := respondToInteraction(s, i.Interaction, "Could not convert the date time to a unix timestamp\n\n\t**error**: "+err.Error())
 				if err != nil {
 					log.Println(err)
 				}
