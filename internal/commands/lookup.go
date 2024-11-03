@@ -3,7 +3,6 @@ package commands
 import (
 	"fmt"
 	"log"
-	"log/slog"
 	"regexp"
 
 	"github.com/NekoFluff/discord"
@@ -84,14 +83,18 @@ func Lookup() discord.Command {
 				return
 			} else if i.Type == discordgo.InteractionApplicationCommand {
 				result := ""
-				c := choices(item)
-				slog.Info("Searching for item", "item", item, "choices", c)
-				if len(c) == 0 {
-					slog.Error("failed to find item", "item", item)
-					result = fmt.Sprintf("Could not find item `%s`", item)
-				} else {
-					result = gtfoItems[c[0].Name]
+
+				for _, choice := range choices(item) {
+					if choice.Name == item {
+						result = gtfoItems[item]
+						break
+					}
 				}
+
+				if result == "" {
+					result = fmt.Sprintf("Could not find the item %s", item)
+				}
+
 				err := respondToInteraction(s, i.Interaction, result)
 
 				if err != nil {
