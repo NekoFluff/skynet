@@ -29,7 +29,7 @@ func main() {
 
 	// Generate Commands
 	bot.AddCommands(commands.Ping(), commands.Pick(), commands.Roll(), commands.RandomLoadout(), commands.Lookup(), commands.Translate(), commands.Timestamp())
-	bot.RegisterCommands()
+	bot.RegisterCommands("")
 
 	go handleSignalExit()
 

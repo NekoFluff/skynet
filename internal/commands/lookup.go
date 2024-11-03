@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 	"log"
+	"regexp"
 
 	"github.com/NekoFluff/discord"
 	"github.com/bwmarrin/discordgo"
@@ -52,18 +53,6 @@ var gtfoItems map[string]string = map[string]string{
 }
 
 func Lookup() discord.Command {
-
-	choices := []*discordgo.ApplicationCommandOptionChoice{}
-	for name := range gtfoItems {
-		choices = append(choices, &discordgo.ApplicationCommandOptionChoice{
-			Name:  name,
-			Value: name,
-		})
-		if len(choices) == 25 {
-			break
-		}
-	}
-
 	command := "lookup"
 
 	return discord.Command{
@@ -72,11 +61,11 @@ func Lookup() discord.Command {
 			Description: fmt.Sprintf("Lookup a GTFO weaopn (e.g. `/%s HEL Revolver`)", command),
 			Options: []*discordgo.ApplicationCommandOption{
 				{
-					Type:        discordgo.ApplicationCommandOptionString,
-					Name:        "item",
-					Description: "The item to lookup",
-					Required:    true,
-					Choices:     choices,
+					Type:         discordgo.ApplicationCommandOptionString,
+					Name:         "item",
+					Description:  "The item to lookup",
+					Required:     true,
+					Autocomplete: true,
 				},
 			},
 		},
@@ -89,18 +78,60 @@ func Lookup() discord.Command {
 
 			item := fmt.Sprint(optionMap["item"].Value)
 
-			result := ""
-			for _, choice := range choices {
-				if choice.Name == item {
-					result = gtfoItems[item]
-					break
+			if i.Type == discordgo.InteractionApplicationCommandAutocomplete {
+				handleAutocomplete(item, s, i)
+				return
+			} else if i.Type == discordgo.InteractionApplicationCommand {
+				result := ""
+				for _, choice := range choices("") {
+					if choice.Name == item {
+						result = gtfoItems[item]
+						break
+					}
 				}
-			}
-			err := respondToInteraction(s, i.Interaction, fmt.Sprint(result))
+				err := respondToInteraction(s, i.Interaction, result)
 
-			if err != nil {
-				log.Println(err)
+				if err != nil {
+					log.Println(err)
+				}
 			}
 		},
 	}
+}
+
+func handleAutocomplete(item string, s discord.Session, i *discordgo.InteractionCreate) {
+	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionApplicationCommandAutocompleteResult,
+		Data: &discordgo.InteractionResponseData{
+			Choices: choices(item),
+		},
+	})
+
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func choices(itemName string) []*discordgo.ApplicationCommandOptionChoice {
+	choices := []*discordgo.ApplicationCommandOptionChoice{}
+
+	for name, _ := range gtfoItems {
+		matched, err := regexp.MatchString(fmt.Sprintf("(?i).*%s.*", itemName), name)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		if itemName == "" || matched {
+			choices = append(choices, &discordgo.ApplicationCommandOptionChoice{
+				Name:  name,
+				Value: name,
+			})
+		}
+
+		if len(choices) >= 24 {
+			break
+		}
+	}
+
+	return choices
 }
