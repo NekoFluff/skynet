@@ -58,7 +58,7 @@ func Lookup() discord.Command {
 	return discord.Command{
 		Command: discordgo.ApplicationCommand{
 			Name:        command,
-			Description: fmt.Sprintf("Lookup a GTFO weaopn (e.g. `/%s HEL Revolver`)", command),
+			Description: fmt.Sprintf("Lookup a GTFO weapon (e.g. `/%s HEL Revolver`)", command),
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:         discordgo.ApplicationCommandOptionString,
