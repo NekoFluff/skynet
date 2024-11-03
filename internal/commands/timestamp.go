@@ -56,7 +56,7 @@ func Timestamp() discord.Command {
 				return
 			}
 
-			err = respondToInteraction(s, i.Interaction, fmt.Sprintf("<t:%d:F> -> `<t:%d:F>`\n<t:%d:R> -> `<t:%d:R>`", timestamp, timestamp, timestamp, timestamp))
+			err = respondToInteraction(s, i.Interaction, fmt.Sprintf("`<t:%d:F>` is <t:%d:F>\n`<t:%d:R>` is <t:%d:R>", timestamp, timestamp, timestamp, timestamp))
 			if err != nil {
 				log.Println(err)
 			}
