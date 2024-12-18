@@ -67,12 +67,13 @@ func calculateDiceRoll(input string) *Calculations {
 	return calculations
 }
 
-func rollDice(numDice int, sides int) int {
-	result := 0
+func rollDice(numDice int, sides int) []DieRoll {
+	rolls := make([]DieRoll, numDice)
 	for i := 0; i < numDice; i++ {
-		result += rand.Intn(sides) + 1
+		roll := rand.Intn(sides) + 1
+		rolls[i] = DieRoll{sides: sides, result: roll}
 	}
-	return result
+	return rolls
 }
 
 func evaluatePostfix(tokens []string) *Calculations {
@@ -94,9 +95,20 @@ func evaluatePostfix(tokens []string) *Calculations {
 			numDice := stack[len(stack)-2]
 			sides := stack[len(stack)-1]
 			stack = stack[:len(stack)-2]
-			result := rollDice(numDice, sides)
+			diceRolls := rollDice(numDice, sides)
+
+			result := 0
+			rolls := ""
+			for i, roll := range diceRolls {
+				if i > 0 {
+					rolls += "+"
+				}
+				rolls += fmt.Sprintf("%d", roll.result)
+				result += roll.result
+			}
+
 			stack = append(stack, result)
-			calculations.diceRolls = append(calculations.diceRolls, fmt.Sprintf("%dd%d: %d", numDice, sides, result))
+			calculations.diceRolls = append(calculations.diceRolls, fmt.Sprintf("%dd%d (%s): %v", numDice, sides, rolls, result))
 		} else {
 			b := stack[len(stack)-1]
 			stack = stack[:len(stack)-1]
@@ -175,4 +187,9 @@ func infixToPostfix(tokens []string) []string {
 type Calculations struct {
 	diceRolls []string
 	result    int
+}
+
+type DieRoll struct {
+	sides  int
+	result int
 }
