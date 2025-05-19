@@ -21,7 +21,7 @@ var (
 )
 
 // initReminderStore initializes the reminder store if it's not already initialized
-func initReminderStore() error {
+func InitReminderStore() error {
 	storeMutex.Lock()
 	defer storeMutex.Unlock()
 
@@ -37,12 +37,12 @@ func initReminderStore() error {
 	}
 
 	reminderStore = store
-	
+
 	return nil
 }
 
 // startReminderProcessor starts a background goroutine to process reminders
-func startReminderProcessor(s discord.Session) {
+func StartReminderProcessor(s discord.Session) {
 	storeMutex.Lock()
 	defer storeMutex.Unlock()
 
@@ -59,14 +59,14 @@ func startReminderProcessor(s discord.Session) {
 
 		for {
 			<-ticker.C
-			
+
 			// Process any pending reminders
 			pendingReminders := reminderStore.GetPendingReminders()
-			
+
 			for _, reminder := range pendingReminders {
 				// Send the reminder message
 				reminderMsg := fmt.Sprintf("<@%s> ⏰ **Reminder:** %s", reminder.UserID, reminder.Message)
-				
+
 				_, err := s.ChannelMessageSend(reminder.ChannelID, reminderMsg)
 				if err != nil {
 					slog.Error("failed to send reminder", "error", err, "channelId", reminder.ChannelID, "userId", reminder.UserID)
@@ -105,19 +105,6 @@ func Reminder() discord.Command {
 			},
 		},
 		Handler: func(s discord.Session, i *discordgo.InteractionCreate) {
-			// Initialize the reminder store if needed
-			if err := initReminderStore(); err != nil {
-				slog.Error("failed to initialize reminder store", "error", err)
-				err := respondToInteraction(s, i.Interaction, "Sorry, I couldn't set up the reminder system. Please try again later.")
-				if err != nil {
-					log.Println(err)
-				}
-				return
-			}
-
-			// Start the processor if this is the first reminder
-			startReminderProcessor(s)
-
 			options := i.ApplicationCommandData().Options
 			optionMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))
 			for _, opt := range options {
@@ -136,7 +123,7 @@ func Reminder() discord.Command {
 			duration, err := time.ParseDuration(datetime)
 			var timestamp int64
 			var reminderTime time.Time
-			
+
 			if err == nil {
 				// If it's a valid duration, use it relative to now
 				reminderTime = time.Now().Add(duration)
@@ -167,7 +154,7 @@ func Reminder() discord.Command {
 			// Create and store the reminder
 			userId := i.Member.User.ID
 			channelId := i.ChannelID
-			
+
 			reminder := utils.Reminder{
 				ID:          uuid.New().String(),
 				UserID:      userId,
@@ -176,7 +163,7 @@ func Reminder() discord.Command {
 				RemindTime:  reminderTime,
 				CreatedTime: time.Now(),
 			}
-			
+
 			err = reminderStore.AddReminder(reminder)
 			if err != nil {
 				slog.Error("failed to add reminder", "error", err)

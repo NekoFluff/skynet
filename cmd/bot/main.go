@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -28,6 +29,12 @@ func main() {
 	defer bot.Stop() // Generate Commands
 	bot.AddCommands(commands.Ping(), commands.Pick(), commands.Roll(), commands.RandomLoadout(), commands.Lookup(), commands.Translate(), commands.Timestamp(), commands.Reminder())
 	bot.RegisterCommands("")
+
+	if err := commands.InitReminderStore(); err != nil {
+		slog.Error("failed to initialize reminder store", "error", err)
+		return
+	}
+	commands.StartReminderProcessor(bot.Session)
 
 	go handleSignalExit()
 
