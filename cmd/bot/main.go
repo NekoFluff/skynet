@@ -25,10 +25,8 @@ func main() {
 		bot.DeveloperIDs = strings.Split(ids, ",")
 	}
 
-	defer bot.Stop()
-
-	// Generate Commands
-	bot.AddCommands(commands.Ping(), commands.Pick(), commands.Roll(), commands.RandomLoadout(), commands.Lookup(), commands.Translate(), commands.Timestamp())
+	defer bot.Stop() // Generate Commands
+	bot.AddCommands(commands.Ping(), commands.Pick(), commands.Roll(), commands.RandomLoadout(), commands.Lookup(), commands.Translate(), commands.Timestamp(), commands.Reminder())
 	bot.RegisterCommands("")
 
 	go handleSignalExit()
