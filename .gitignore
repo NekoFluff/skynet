@@ -29,3 +29,4 @@ go.work
 vendor/
 
 data/*
+internal/commands/data/reminders/*

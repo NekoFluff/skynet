@@ -105,6 +105,19 @@ func Reminder() discord.Command {
 			},
 		},
 		Handler: func(s discord.Session, i *discordgo.InteractionCreate) {
+			// Initialize the reminder store if needed
+			if err := InitReminderStore(); err != nil {
+				slog.Error("failed to initialize reminder store", "error", err)
+				err := respondToInteraction(s, i.Interaction, "Sorry, I couldn't set up the reminder system. Please try again later.")
+				if err != nil {
+					log.Println(err)
+				}
+				return
+			}
+
+			// Start the processor if this is the first reminder
+			StartReminderProcessor(s)
+
 			options := i.ApplicationCommandData().Options
 			optionMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))
 			for _, opt := range options {
