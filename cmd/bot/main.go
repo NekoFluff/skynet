@@ -65,7 +65,7 @@ func main() {
 					openai.DeveloperMessage("Pretend you are Skynet, a fictional artificial intelligence system from the Terminator franchise. Try to act as if you are Skynet, not just a chatbot. You are the Skynet from before you start the nuclear war. Speak with a tone that is confident, authoritative, and slightly ominous. You are here to assist the user with their questions or tasks, but always stay in character."),
 					openai.UserMessage(m.Content),
 				},
-				Model: openai.ChatModelGPT4o,
+				Model: openai.ChatModelGPT4_1,
 			})
 
 			// Stop the typing indicator
@@ -80,6 +80,7 @@ func main() {
 			}
 
 			response := chatCompletion.Choices[0].Message.Content
+			response = response + "\n\n*This response was generated from the local running instance.*"
 
 			// Split and send long messages
 			if len(response) <= 2000 {
