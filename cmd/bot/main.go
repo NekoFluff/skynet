@@ -80,7 +80,6 @@ func main() {
 			}
 
 			response := chatCompletion.Choices[0].Message.Content
-			response = response + "\n\n*This response was generated from the local running instance.*"
 
 			// Split and send long messages
 			if len(response) <= 2000 {
