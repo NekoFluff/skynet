@@ -23,6 +23,8 @@ import (
 )
 
 func main() {
+	app_env := utils.GetEnvVar("APP_ENV")
+
 	// Start up discord bot
 	token := utils.GetEnvVar("DISCORD_BOT_TOKEN")
 	bot := discord.NewBot(token)
@@ -80,6 +82,9 @@ func main() {
 			}
 
 			response := chatCompletion.Choices[0].Message.Content
+			if app_env == "local" {
+				response = response + "\n\n*This response was generated from the local running instance.*"
+			}
 
 			// Split and send long messages
 			if len(response) <= 2000 {
