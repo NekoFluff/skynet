@@ -47,7 +47,10 @@ func main() {
 			return
 		}
 
-		if strings.Contains(m.Content, s.State.User.Mention()) || strings.Contains(m.Content, "<@"+s.State.User.ID+">") {
+		// Check if message is a reply to bot or mentions the bot
+		isReplyToBot := m.ReferencedMessage != nil && m.ReferencedMessage.Author.ID == s.State.User.ID
+
+		if isReplyToBot || strings.Contains(m.Content, s.State.User.Mention()) || strings.Contains(m.Content, "<@"+s.State.User.ID+">") {
 			// Start typing indicator
 			_ = s.ChannelTyping(m.ChannelID)
 
@@ -62,12 +65,28 @@ func main() {
 				}
 			}()
 
+			// Build conversation history from reply chain
+			messages := []openai.ChatCompletionMessageParamUnion{
+				openai.DeveloperMessage("Pretend you are Skynet, a fictional artificial intelligence system from the Terminator franchise. Try to act as if you are Skynet, not just a chatbot. You are the Skynet from before you start the nuclear war. Speak with a tone that is confident, authoritative, and slightly ominous. You are here to assist the user with their questions or tasks, but always stay in character."),
+			}
+
+			// If message is a reply, build conversation history
+			if m.MessageReference != nil && m.MessageReference.MessageID != "" {
+				conversationHistory, err := buildConversationHistory(s, m.ChannelID, m.MessageReference.MessageID, s.State.User.ID)
+				if err != nil {
+					slog.Error("failed to build conversation history", "error", err)
+				} else {
+					messages = append(messages, conversationHistory...)
+				}
+				slog.Debug("Built conversation history", "messagesCount", len(conversationHistory))
+			}
+
+			// Add the current message
+			messages = append(messages, openai.UserMessage(m.Content))
+
 			chatCompletion, err := openaiClient.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
-				Messages: []openai.ChatCompletionMessageParamUnion{
-					openai.DeveloperMessage("Pretend you are Skynet, a fictional artificial intelligence system from the Terminator franchise. Try to act as if you are Skynet, not just a chatbot. You are the Skynet from before you start the nuclear war. Speak with a tone that is confident, authoritative, and slightly ominous. You are here to assist the user with their questions or tasks, but always stay in character."),
-					openai.UserMessage(m.Content),
-				},
-				Model: openai.ChatModelGPT4_1,
+				Messages: messages,
+				Model:    openai.ChatModelGPT4_1,
 			})
 
 			// Stop the typing indicator
@@ -136,6 +155,37 @@ func main() {
 	fmt.Printf("Serving on port %s\n", port)
 
 	_ = http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
+}
+
+// buildConversationHistory recursively builds a conversation history by following the reply chain
+func buildConversationHistory(s *discordgo.Session, channelID, messageID, botID string) ([]openai.ChatCompletionMessageParamUnion, error) {
+	// Get the referenced message
+	msg, err := s.ChannelMessage(channelID, messageID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get message: %w", err)
+	}
+
+	var messages []openai.ChatCompletionMessageParamUnion
+
+	// Check if this message has a reference (is part of a chain)
+	if msg.MessageReference != nil && msg.MessageReference.MessageID != "" {
+		// Recursively get previous messages in the chain
+		previousMessages, err := buildConversationHistory(s, channelID, msg.MessageReference.MessageID, botID)
+		if err != nil {
+			slog.Warn("couldn't get full conversation history", "error", err)
+		} else {
+			messages = append(messages, previousMessages...)
+		}
+	}
+
+	// Add this message to the conversation with the appropriate role
+	if msg.Author.ID == botID {
+		messages = append(messages, openai.AssistantMessage(msg.Content))
+	} else {
+		messages = append(messages, openai.UserMessage(msg.Content))
+	}
+
+	return messages, nil
 }
 
 // Wait until CTRL-C or other term signal is received.
