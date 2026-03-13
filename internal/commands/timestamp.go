@@ -21,7 +21,7 @@ func Timestamp() discord.Command {
 				{
 					Type:        discordgo.ApplicationCommandOptionString,
 					Name:        "datetime",
-					Description: "The date and time to convert to a unix timestamp",
+					Description: "The date and time to convert to a unix timestamp (e.g. 3/13/2026 3:45PM)",
 					Required:    true,
 				},
 				{
@@ -56,7 +56,17 @@ func Timestamp() discord.Command {
 				return
 			}
 
-			err = respondToInteraction(s, i.Interaction, fmt.Sprintf("`<t:%d:F>` is <t:%d:F>\n`<t:%d:R>` is <t:%d:R>", timestamp, timestamp, timestamp, timestamp))
+			t := timestamp
+			msg := fmt.Sprintf("`<t:%d:F>` is <t:%d:F>\n", t, t) +
+				fmt.Sprintf("`<t:%d:f>` is <t:%d:f>\n", t, t) +
+				fmt.Sprintf("`<t:%d:D>` is <t:%d:D>\n", t, t) +
+				fmt.Sprintf("`<t:%d:d>` is <t:%d:d>\n", t, t) +
+				fmt.Sprintf("`<t:%d:t>` is <t:%d:t>\n", t, t) +
+				fmt.Sprintf("`<t:%d:T>` is <t:%d:T>\n", t, t) +
+				fmt.Sprintf("`<t:%d:R>` is <t:%d:R>", t, t) +
+				fmt.Sprintf("`<t:%d:S>` is <t:%d:S>", t, t) +
+				fmt.Sprintf("`<t:%d:s>` is <t:%d:s>", t, t)
+			err = respondToInteraction(s, i.Interaction, msg)
 			if err != nil {
 				log.Println(err)
 			}
