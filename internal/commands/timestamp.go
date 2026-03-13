@@ -63,9 +63,9 @@ func Timestamp() discord.Command {
 				fmt.Sprintf("`<t:%d:d>` is <t:%d:d>\n", t, t) +
 				fmt.Sprintf("`<t:%d:t>` is <t:%d:t>\n", t, t) +
 				fmt.Sprintf("`<t:%d:T>` is <t:%d:T>\n", t, t) +
-				fmt.Sprintf("`<t:%d:R>` is <t:%d:R>", t, t) +
-				fmt.Sprintf("`<t:%d:S>` is <t:%d:S>", t, t) +
-				fmt.Sprintf("`<t:%d:s>` is <t:%d:s>", t, t)
+				fmt.Sprintf("`<t:%d:R>` is <t:%d:R>\n", t, t) +
+				fmt.Sprintf("`<t:%d:S>` is <t:%d:S>\n", t, t) +
+				fmt.Sprintf("`<t:%d:s>` is <t:%d:s>\n", t, t)
 			err = respondToInteraction(s, i.Interaction, msg)
 			if err != nil {
 				log.Println(err)
