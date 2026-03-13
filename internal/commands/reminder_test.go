@@ -24,7 +24,7 @@ func TestServer_Reminder(t *testing.T) {
 				session.EXPECT().InteractionRespond(gomock.Any(), discord.ContainsInteractionResponse("I'll remind you about")).Times(1).Return(nil)
 			},
 			message:    "Test reminder",
-			dateTime:   "October 8, 2025 4PM",
+			dateTime:   "October 8, 2099 4PM",
 			timezone:   "MST",
 			shouldPass: true,
 		},
