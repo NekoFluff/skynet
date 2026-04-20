@@ -18,8 +18,8 @@ import (
 	"github.com/NekoFluff/skynet/internal/commands"
 	"github.com/NekoFluff/skynet/internal/utils"
 	"github.com/bwmarrin/discordgo"
-	"github.com/openai/openai-go"
-	"github.com/openai/openai-go/option"
+	"github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/option"
 )
 
 func main() {
@@ -86,7 +86,7 @@ func main() {
 
 			chatCompletion, err := openaiClient.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
 				Messages: messages,
-				Model:    openai.ChatModelGPT4_1,
+				Model:    openai.ChatModelGPT5_4,
 			})
 
 			// Stop the typing indicator
