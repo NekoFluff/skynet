@@ -1,5 +1,5 @@
 # Step 1: Build from golang alpine
-FROM golang:1.23-alpine as builder
+FROM golang:1.26-alpine AS builder
 WORKDIR /go/src/app
 COPY cmd ./cmd
 COPY internal ./internal

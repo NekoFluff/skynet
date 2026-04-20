@@ -42,7 +42,7 @@ func InitReminderStore() error {
 }
 
 // startReminderProcessor starts a background goroutine to process reminders
-func StartReminderProcessor(s discord.Session) {
+func StartReminderProcessor(s *discordgo.Session) {
 	storeMutex.Lock()
 	defer storeMutex.Unlock()
 
@@ -104,7 +104,7 @@ func Reminder() discord.Command {
 				},
 			},
 		},
-		Handler: func(s discord.Session, i *discordgo.InteractionCreate) {
+		Handler: func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			// Initialize the reminder store if needed
 			if err := InitReminderStore(); err != nil {
 				slog.Error("failed to initialize reminder store", "error", err)
