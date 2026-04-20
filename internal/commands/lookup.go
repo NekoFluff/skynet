@@ -69,7 +69,7 @@ func Lookup() discord.Command {
 				},
 			},
 		},
-		Handler: func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+		Handler: func(s discord.Session, i *discordgo.InteractionCreate) {
 			options := i.ApplicationCommandData().Options
 			optionMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))
 			for _, opt := range options {
@@ -105,7 +105,7 @@ func Lookup() discord.Command {
 	}
 }
 
-func handleAutocomplete(item string, s *discordgo.Session, i *discordgo.InteractionCreate) {
+func handleAutocomplete(item string, s discord.Session, i *discordgo.InteractionCreate) {
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionApplicationCommandAutocompleteResult,
 		Data: &discordgo.InteractionResponseData{

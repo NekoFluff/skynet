@@ -1,5 +1,5 @@
-github.com/NekoFluff/discord v1.12.0 h1:GNPbnc3U6evLo8CLcR3mqRi4TJw6GWflBeucFxOonh4=
-github.com/NekoFluff/discord v1.12.0/go.mod h1:CD3LKMhPWykBy1KOjaBMiyv+D86Bl/eA6WBUYIh8rso=
+github.com/NekoFluff/discord v1.13.0 h1:QSRrU2MPafMafT96G6mxIraQkpaX45umERufyCalYKc=
+github.com/NekoFluff/discord v1.13.0/go.mod h1:B6eusid4YQ8LGr3Yoe/lcBi9TRPEot7MOAmxSBtP3Uo=
 github.com/bwmarrin/discordgo v0.29.0 h1:FmWeXFaKUwrcL3Cx65c20bTRW+vOb6k8AnaP+EgjDno=
 github.com/bwmarrin/discordgo v0.29.0/go.mod h1:NJZpH+1AfhIcyQsPeuBKsUtYrRnjkyu0kIVMCHkZtRY=
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=

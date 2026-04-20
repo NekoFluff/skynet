@@ -5,7 +5,7 @@ go 1.26.0
 // replace github.com/NekoFluff/discord => ../discord
 
 require (
-	github.com/NekoFluff/discord v1.12.0
+	github.com/NekoFluff/discord v1.13.0
 	github.com/bwmarrin/discordgo v0.29.0
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
